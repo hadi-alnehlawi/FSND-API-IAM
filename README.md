@@ -12,7 +12,7 @@ You have been called on to demonstrate your newly learned skills to create a ful
 4) Allow the shop managers to create new drinks and edit existing drinks.
 
 ## Tasks
-
+Â
 There are `@TODO` comments throughout the project. We recommend tackling the sections in order. Start by reading the READMEs in:
 
 1. [`./backend/`](./backend/README.md)
@@ -30,6 +30,6 @@ The `./backend` directory contains a partially completed Flask server with a pre
 
 ### Frontend
 
-The `./frontend` directory contains a complete Ionic frontend to consume the data from the Flask server. You will only need to update the environment variables found within (./frontend/src/environment/environment.ts) to reflect the Auth0 configuration details set up for the backend app. 
+The `./frontend` directory contains a complete Ionic frontend to consume the data from the Flask server. You will only need to update the environment variables found within (./frontend/src/environment/environment.ts) to reflect the Auth0 configuration details set up for the backend app.
 
 [View the README.md within ./frontend for more details.](./frontend/README.md)
