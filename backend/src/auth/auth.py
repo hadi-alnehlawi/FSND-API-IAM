@@ -5,9 +5,9 @@ from jose import jwt
 from urllib.request import urlopen
 
 
-AUTH0_DOMAIN = 'udacity-fsnd.auth0.com'
+AUTH0_DOMAIN = 'hadi-alnehlawi.eu.auth0.com'
 ALGORITHMS = ['RS256']
-API_AUDIENCE = 'dev'
+API_AUDIENCE = 'coffeshop'
 
 # AuthError Exception
 '''
@@ -33,28 +33,30 @@ class AuthError(Exception):
     return the token part of the header
 '''
 
+
 def get_token_auth_header():
     if "Authorization" not in request.headers:
         raise AuthError({"code": "not authorized",
-                          "description": "no heddddddader is present"
-                          }, 401)
+                         "description": "no header is present"
+                         }, 401)
     auth_header = request.headers['Authorization']
     auth_header = auth_header.split(" ")
     if not auth_header:
         raise AuthError({"code": "not authorized",
-                          "description": "no header is present"
-                          }, 401)
+                         "description": "no header is present"
+                         }, 401)
     elif len(auth_header) != 2:
         raise AuthError({"code": "not authorized",
-                          "description": "header is malformed"
-                          }, 401)
+                         "description": "header is malformed"
+                         }, 401)
     elif auth_header[0].lower() != 'bearer':
         raise AuthError({"code": "not authorized",
-                                  "description": "header is malformed"
-                                  }, 401)
+                         "description": "header is malformed"
+                         }, 401)
     else:
         token = auth_header[1]
         return token
+
 
 '''
 @TODO implement check_permissions(permission, payload) method
@@ -70,7 +72,19 @@ def get_token_auth_header():
 
 
 def check_permissions(permission, payload):
-    raise Exception('Not Implemented')
+    if 'permissions' not in payload:
+        # not authorized
+        raise AuthError({
+            'code': 'bad request',
+            'description': 'Permissions not included in JWT.'
+        }, 400)
+    if permission not in payload['permissions']:
+        # forbidden
+        raise AuthError({
+            'code': 'unauthorized',
+            'description': 'Permission not found.'
+        }, 403)
+    return True
 
 
 '''
@@ -117,31 +131,24 @@ def verify_decode_jwt(token):
                 audience=API_AUDIENCE,
                 issuer='https://' + AUTH0_DOMAIN + '/'
             )
-
             return payload
+        except jwt.ExpiredSignatureError:
+            raise AuthError({
+                'code': 'token_expired',
+                'description': 'Token expired.'
+            }, 401)
 
-    except jwt.ExpiredSignatureError:
-        raise AuthError({
-            'code': 'token_expired',
-            'description': 'Token expired.'
-        }, 401)
-
-    except jwt.JWTClaimsError:
-        raise AuthError({
-            'code': 'invalid_claims',
-            'description': 'Incorrect claims. Please, check the audience and issuer.'
-        }, 401)
-    except Exception:
-        raise AuthError({
-            'code': 'invalid_header',
-            'description': 'Unable to parse authentication token.'
-        }, 400)
-    raise AuthError({
+        except jwt.JWTClaimsError:
+            raise AuthError({
+                'code': 'invalid_claims',
+                'description': 'Incorrect claims. Please, check the audience and issuer.'
+            }, 401)
+        except Exception:
+            raise AuthError({
                 'code': 'invalid_header',
-                'description': 'Unable to find the appropriate key.'
+                'description': 'Unable to parse authentication token.'
             }, 400)
-    raise BaseException('Not Implemented')
-
+            raise BaseException('Not Implemented')
 
 
 '''
@@ -164,6 +171,5 @@ def requires_auth(permission=''):
             payload = verify_decode_jwt(token)
             check_permissions(permission, payload)
             return f(payload, *args, **kwargs)
-
         return wrapper
     return requires_auth_decorator
