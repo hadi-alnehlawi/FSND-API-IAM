@@ -109,7 +109,7 @@ def post_drinks(payload):
 @ app.route('/drinks/<int:id>', methods=['PATCH'])
 @ requires_auth('patch:drinks')
 def patch_drinks(payload, id):
-    drink = Drink.query.filter(Drink.id == id).query.one_or_none()
+    drink = Drink.query.filter(Drink.id == id).one_or_none()
     if not drink:
         abort(404)
     else:
@@ -120,7 +120,7 @@ def patch_drinks(payload, id):
             recipe = json.dumps(body.get('recipe'))
             drink.title = title
             drink.recipe = recipe
-            book.update()
+            drink.update()
             return jsonify({"success": True, "drinks": drink.long()}), 200
         except:
             abort(405)
@@ -141,7 +141,7 @@ def patch_drinks(payload, id):
 @ app.route('/drinks/<int:id>', methods=['DELETE'])
 @ requires_auth('delete:drinks')
 def delete_drinks(payload, id):
-    drink = Drink.query.filter(Drink.id == id).query.one_or_none()
+    drink = Drink.query.filter(Drink.id == id).one_or_none()
     if not drink:
         abort(404)
     else:
