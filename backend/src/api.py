@@ -34,7 +34,7 @@ drink.insert()
 '''
 
 
-@app.route('/drinks')
+@app.route('/drinks', methods=['GET'])
 def get_drinks():
     drinks = Drink.query.all()
     drinks_list = [drink.short() for drink in Drink.query.all()]
@@ -79,6 +79,7 @@ def get_drinks_detail(payload):
 @app.route('/drinks', methods=['POST'])
 @requires_auth('post:drinks')
 def post_drinks(payload):
+    print(payload)
     body = request.get_json()
     if not body:
         abort(404)
